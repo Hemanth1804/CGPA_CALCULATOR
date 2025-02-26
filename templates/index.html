@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculate cgpa</title>
+    <style>
+        body{
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: 20px;
+        }
+        .container{
+            margin: auto;
+            width: 50%;
+            height: auto;
+            border: 2px solid black;
+            border-radius: 20px 20px 0 0;
+        }
+        .box1{
+            width: 100%;
+            height: 50px;
+            margin: 0;
+            background-color: black;
+            color: aliceblue;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            font-size: 30px;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+        }
+        td{
+            width: 30%;
+            /* border: 1px solid black; */
+           padding: 25px;
+           text-align: center;
+        }
+        label{
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+           
+        }
+        select{
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            width: 150px;
+            height: 20px;
+            border: 1px solid black;
+            text-align: center;
+            margin-top: 5px;
+            font-size: 15px;
+        }
+        input[type=text]{
+            width: 50%;
+            height: 35px;
+            border: 2px solid black;
+            text-align: center;
+        }
+        button{
+            width: 100px;
+            height: 50px;
+            background-color: rgb(140, 237, 140);
+            color: black;
+            border-radius: 10px;
+        }
+        button:hover{
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="box1">Fill Your Information</div>
+
+        <div class="table-container">
+            <table>
+                <tr>
+                    <td>
+                        <label for="scheme">Scheme</label>
+                        <select id="scheme">
+                            <option value="sc">--Select--</option>
+                            <option value="2022">2022</option>
+                        </select>
+                    </td>
+                    <td>
+                        <label for="Stream">Stream</label>
+                        <select id="Stream">
+                            <option value="dept">--Stream--</option>
+                            <option value="cs">CSE</option>
+                        </select>
+                    </td>
+                    <td>
+                        <label for="sem">Semester</label>
+                        <select id="sem">
+                            <option value="semi">--Sem--</option>
+                            <option value="5">5th</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="usn_text" colspan="3"><input type="text" name="" id="USN" placeholder="Enter Your USN" required></td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <button onclick="submit()">Submit</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script>async function submit() {
+        let scheme = document.getElementById("scheme").value;
+        let stream = document.getElementById("Stream").value;
+        let semester = document.getElementById("sem").value;
+        let usn = document.getElementById("USN").value.trim().toUpperCase();
+    
+        if (scheme === "sc" || stream === "dept" || semester === "semi") {
+            alert("Please select all options before proceeding!");
+            return;
+        }
+        if (usn === "" || usn.length !== 10) {
+            alert("Please enter your USN properly!");
+            return;
+        }
+    
+        // Check if USN exists
+        let response = await fetch("http://127.0.0.1:5000/check_usn", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ usn })
+        });
+    
+        let result = await response.json();
+    
+        if (result.exists) {
+            window.location.href = `cse5.html?usn=${encodeURIComponent(usn)}&name=${encodeURIComponent(result.name)}`;
+        } else {
+            let name = prompt("USN not found! Please enter your name:");
+            if (name) {
+                await fetch("/add_student", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ usn, name })
+                });
+                alert("Student added successfully!");
+                window.location.href = `cse5.html?usn=${encodeURIComponent(usn)}&name=${encodeURIComponent(name)}`;
+            }
+        }
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Student</title>
+</head>
+<body>
+    <h2>New Student Registration</h2>
+    <form action="/add_student" method="post">
+        <input type="hidden" name="usn" value="{{ usn }}">
+        <label>Name:</label>
+        <input type="text" name="name" required>
+        <label>SGPA:</label>
+        <input type="text" name="sgpa" required>
+        <button type="submit">Save</button>
+    </form>
+</body>
+</html>
